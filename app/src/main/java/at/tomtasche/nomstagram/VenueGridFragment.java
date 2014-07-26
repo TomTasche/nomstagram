@@ -11,11 +11,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +53,7 @@ public class VenueGridFragment extends Fragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (!(getActivity() instanceof  VenueProvider)) {
+        if (!(getActivity() instanceof VenueProvider)) {
             throw new IllegalArgumentException("activity has to implement VenueProvider");
         }
 

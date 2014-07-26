@@ -2,15 +2,13 @@ package at.tomtasche.nomstagram;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.TextView;
 
 import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
@@ -26,6 +24,7 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
 
     static class ViewHolder {
         DynamicHeightImageView image;
+        TextView textName;
     }
 
     private final LayoutInflater mLayoutInflater;
@@ -47,16 +46,20 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
             convertView = mLayoutInflater.inflate(R.layout.list_item_venue, parent, false);
             vh = new ViewHolder();
             vh.image = (DynamicHeightImageView) convertView.findViewById(R.id.image);
+            vh.textName = (TextView) convertView.findViewById(R.id.text_name);
 
             convertView.setTag(vh);
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
 
+        final Venue venue = getItem(position);
+
+        vh.textName.setText(venue.getName());
+
         double positionHeight = getPositionRatio(position);
         vh.image.setHeightRatio(positionHeight);
 
-        final Venue venue = getItem(position);
         Collection<String> photoUrls = venue.getPhotoUrls();
         if (photoUrls.size() > 0) {
             Picasso.with(getContext()).load(photoUrls.iterator().next()).into(vh.image);

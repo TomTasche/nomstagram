@@ -1,8 +1,6 @@
 package at.tomtasche.nomstagram;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -12,6 +10,7 @@ public class Venue {
 
     private final String id;
 
+    private String name;
     private final List<String> photoUrls;
 
     public Venue(String id) {
@@ -39,6 +38,14 @@ public class Venue {
 
     public String getId() {
         return id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<String> getPhotoUrls() {

@@ -1,20 +1,5 @@
 package at.tomtasche.nomstagram;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -26,6 +11,20 @@ import android.os.HandlerThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VenueActivity extends FragmentActivity implements VenueProvider, LocationListener {
 
@@ -43,8 +42,8 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
     private static final int SEARCH_RADIUS = 1000;
 
     private Handler mainHandler;
-	private Handler networkHandler;
-	private HandlerThread networkHandlerThread;
+    private Handler networkHandler;
+    private HandlerThread networkHandlerThread;
 
     private LocationManager locationManager;
     private final Object locationLock;
@@ -58,8 +57,8 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
     }
 
     @Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -75,20 +74,20 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
             fm.beginTransaction().add(android.R.id.content, fragment).commit();
         }
 
-		networkHandlerThread = new HandlerThread("network-thread");
-		networkHandlerThread.start();
+        networkHandlerThread = new HandlerThread("network-thread");
+        networkHandlerThread.start();
 
-		networkHandler = new Handler(networkHandlerThread.getLooper());
+        networkHandler = new Handler(networkHandlerThread.getLooper());
 
         mainHandler = new Handler();
     }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-		networkHandlerThread.quit();
-	}
+        networkHandlerThread.quit();
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -161,30 +160,30 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
     }
 
     private List<Venue> fetchVenues(double lat, double lon, int radius) throws IOException, JSONException {
-		String url = API_URL_ENDPOINT + API_URL_METHOD_SEARCH;
-		url += API_PARAM_VERSION;
-		url += "&ll=" + lat + "," + lon + "&llAcc=0";
-		url += "&categoryId=4d4b7105d754a06374d81259";
-		url += "&radius=" + radius;
-		url += "&intent=browse";
-		url += API_PARAM_CLIENT_ID;
-		url += API_PARAM_CLIENT_SECRET;
+        String url = API_URL_ENDPOINT + API_URL_METHOD_SEARCH;
+        url += API_PARAM_VERSION;
+        url += "&ll=" + lat + "," + lon + "&llAcc=0";
+        url += "&categoryId=4d4b7105d754a06374d81259";
+        url += "&radius=" + radius;
+        url += "&intent=browse";
+        url += API_PARAM_CLIENT_ID;
+        url += API_PARAM_CLIENT_SECRET;
 
         List<Venue> venues = new ArrayList<Venue>();
 
-		JSONObject venuesJsonObject = fetchJson(url);
+        JSONObject venuesJsonObject = fetchJson(url);
 
-		JSONArray venuesArray = venuesJsonObject.getJSONObject("response")
-				.getJSONArray("venues");
-		for (int i = 0; i < venuesArray.length(); i++) {
+        JSONArray venuesArray = venuesJsonObject.getJSONObject("response")
+                .getJSONArray("venues");
+        for (int i = 0; i < venuesArray.length(); i++) {
             JSONObject venueObject = venuesArray.getJSONObject(i);
-			String venueName = venueObject.getString("name");
-			String venueId = venueObject.getString("id");
+            String venueName = venueObject.getString("name");
+            String venueId = venueObject.getString("id");
 
-			int venueDistance = venueObject.getJSONObject("location").getInt(
-					"distance");
+            int venueDistance = venueObject.getJSONObject("location").getInt(
+                    "distance");
 
-			List<String> venuePhotos = fetchPhotos(venueId);
+            List<String> venuePhotos = fetchPhotos(venueId);
             if (venuePhotos.size() <= 0) {
                 // it doesn't make sense right now to include restaurants without photos in this app
 
@@ -192,45 +191,46 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
             }
 
             Venue venue = new Venue(venueId);
+            venue.setName(venueName);
             venue.addPhotoUrls(venuePhotos);
 
             venues.add(venue);
         }
 
         return venues;
-	}
+    }
 
-	private List<String> fetchPhotos(String venueId) throws IOException, JSONException {
-		String url = API_URL_ENDPOINT;
-		url += String.format(API_URL_METHOD_PHOTOS, venueId);
-		url += API_PARAM_VERSION;
-		url += API_PARAM_CLIENT_ID;
-		url += API_PARAM_CLIENT_SECRET;
+    private List<String> fetchPhotos(String venueId) throws IOException, JSONException {
+        String url = API_URL_ENDPOINT;
+        url += String.format(API_URL_METHOD_PHOTOS, venueId);
+        url += API_PARAM_VERSION;
+        url += API_PARAM_CLIENT_ID;
+        url += API_PARAM_CLIENT_SECRET;
 
         List<String> venuePhotos = new ArrayList<String>();
 
-		JSONObject photosJsonObject = fetchJson(url);
+        JSONObject photosJsonObject = fetchJson(url);
         if (photosJsonObject == null) {
             return venuePhotos;
         }
 
-		JSONArray photosArray = photosJsonObject.getJSONObject("response")
-				.getJSONObject("photos").getJSONArray("items");
-		for (int i = 0; i < photosArray.length(); i++) {
-			JSONObject photoObject = photosArray.getJSONObject(i);
-			String photoUrl = photoObject.getString("prefix")
-					+ photoObject.getString("width") + "x"
-					+ photoObject.getString("height")
-					+ photoObject.getString("suffix");
-			photoUrl = URLDecoder.decode(photoUrl, "UTF-8");
+        JSONArray photosArray = photosJsonObject.getJSONObject("response")
+                .getJSONObject("photos").getJSONArray("items");
+        for (int i = 0; i < photosArray.length(); i++) {
+            JSONObject photoObject = photosArray.getJSONObject(i);
+            String photoUrl = photoObject.getString("prefix")
+                    + photoObject.getString("width") + "x"
+                    + photoObject.getString("height")
+                    + photoObject.getString("suffix");
+            photoUrl = URLDecoder.decode(photoUrl, "UTF-8");
 
             venuePhotos.add(photoUrl);
-		}
+        }
 
         return venuePhotos;
-	}
+    }
 
-	private JSONObject fetchJson(String url) throws IOException, JSONException {
+    private JSONObject fetchJson(String url) throws IOException, JSONException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url)
                 .openConnection();
         try {
