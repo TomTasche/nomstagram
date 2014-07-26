@@ -21,7 +21,7 @@
             android:id="@+id/image_source"
             android:layout_width="14sp"
             android:layout_height="match_parent"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp" />
 
         <TextView
             android:id="@+id/text_name"
