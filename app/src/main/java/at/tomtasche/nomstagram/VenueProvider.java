@@ -1,6 +1,6 @@
 package at.tomtasche.nomstagram;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by tom on 26.07.14.
@@ -13,6 +13,6 @@ public interface VenueProvider {
 
     public interface VenueLoadCallback {
 
-        public void onVenuesLoaded(Collection<Venue> venues);
+        public void onVenuesLoaded(List<Venue> venues);
     }
 }

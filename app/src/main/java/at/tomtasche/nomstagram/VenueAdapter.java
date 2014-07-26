@@ -57,11 +57,11 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
         vh.image.setHeightRatio(positionHeight);
 
         final Venue venue = getItem(position);
-        Collection<String> photoUrls = venue.photoUrls;
+        Collection<String> photoUrls = venue.getPhotoUrls();
         if (photoUrls.size() > 0) {
             Picasso.with(getContext()).load(photoUrls.iterator().next()).into(vh.image);
         } else {
-            Log.d("nomstagram", "venue with id " + venue.id + " has no photoUrls");
+            Log.d("nomstagram", "venue with id " + venue.getId() + " has no photoUrls");
 
             Picasso.with(getContext()).load(R.drawable.ic_launcher).into(vh.image);
         }

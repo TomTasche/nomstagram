@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,7 +141,7 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
                     int radius = SEARCH_RADIUS;
                     radius *= offset + 1;
 
-                    final Collection<Venue> venues = fetchVenues(lat, lon, radius);
+                    final List<Venue> venues = fetchVenues(lat, lon, radius);
 
                     mainHandler.post(new Runnable() {
                         @Override
@@ -159,7 +160,7 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
         });
     }
 
-    private Collection<Venue> fetchVenues(double lat, double lon, int radius) throws IOException, JSONException {
+    private List<Venue> fetchVenues(double lat, double lon, int radius) throws IOException, JSONException {
 		String url = API_URL_ENDPOINT + API_URL_METHOD_SEARCH;
 		url += API_PARAM_VERSION;
 		url += "&ll=" + lat + "," + lon + "&llAcc=0";
@@ -169,7 +170,7 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
 		url += API_PARAM_CLIENT_ID;
 		url += API_PARAM_CLIENT_SECRET;
 
-        Collection<Venue> venues = new ArrayList<Venue>();
+        List<Venue> venues = new ArrayList<Venue>();
 
 		JSONObject venuesJsonObject = fetchJson(url);
 
@@ -183,16 +184,15 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
 			int venueDistance = venueObject.getJSONObject("location").getInt(
 					"distance");
 
-			Collection<String> venuePhotos = fetchPhotos(venueId);
+			List<String> venuePhotos = fetchPhotos(venueId);
             if (venuePhotos.size() <= 0) {
                 // it doesn't make sense right now to include restaurants without photos in this app
 
                 continue;
             }
 
-            Venue venue = new Venue();
-            venue.id = venueId;
-            venue.photoUrls = venuePhotos;
+            Venue venue = new Venue(venueId);
+            venue.addPhotoUrls(venuePhotos);
 
             venues.add(venue);
         }
@@ -200,14 +200,14 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
         return venues;
 	}
 
-	private Collection<String> fetchPhotos(String venueId) throws IOException, JSONException {
+	private List<String> fetchPhotos(String venueId) throws IOException, JSONException {
 		String url = API_URL_ENDPOINT;
 		url += String.format(API_URL_METHOD_PHOTOS, venueId);
 		url += API_PARAM_VERSION;
 		url += API_PARAM_CLIENT_ID;
 		url += API_PARAM_CLIENT_SECRET;
 
-        Collection<String> venuePhotos = new ArrayList<String>();
+        List<String> venuePhotos = new ArrayList<String>();
 
 		JSONObject photosJsonObject = fetchJson(url);
         if (photosJsonObject == null) {

@@ -15,7 +15,10 @@ import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by tom on 26.07.14.
@@ -26,7 +29,7 @@ public class VenueGridFragment extends Fragment implements
     private StaggeredGridView mGridView = null;
     private VenueAdapter mAdapter = null;
 
-    private Collection<Venue> mData = null;
+    private Collection<Venue> mData;
 
     private boolean mHasRequestedMore = false;
     private int offset;
@@ -34,6 +37,7 @@ public class VenueGridFragment extends Fragment implements
 
     public VenueGridFragment() {
         offset = 0;
+        mData = new HashSet<Venue>();
     }
 
     @Override
@@ -81,7 +85,7 @@ public class VenueGridFragment extends Fragment implements
             mAdapter = new VenueAdapter(getActivity(), R.id.image);
         }
 
-        if (mData == null) {
+        if (mData.size() == 0) {
             venueProvider.loadVenues(this, offset);
 
             mHasRequestedMore = true;
@@ -113,17 +117,18 @@ public class VenueGridFragment extends Fragment implements
         Venue venue = mAdapter.getItem(position);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(VenueActivity.FOURSQUARE_URL_BASE + VenueActivity.FOURSQUARE_PATH_VENUE + venue.id));
+        intent.setData(Uri.parse(VenueActivity.FOURSQUARE_URL_BASE + VenueActivity.FOURSQUARE_PATH_VENUE + venue.getId()));
         getActivity().startActivity(intent);
     }
 
     @Override
-    public void onVenuesLoaded(Collection<Venue> venues) {
-        mData = venues;
-
-        mAdapter.clear();
-
-        mAdapter.addAll(venues);
+    public void onVenuesLoaded(List<Venue> venues) {
+        for (Venue venue : venues) {
+            boolean added = mData.add(venue);
+            if (added) {
+                mAdapter.add(venue);
+            }
+        }
 
         mAdapter.notifyDataSetChanged();
 
