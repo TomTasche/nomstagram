@@ -79,19 +79,22 @@ public class VenueGridFragment extends Fragment implements
             mGridView.setEmptyView(getView().findViewById(android.R.id.empty));
         }
 
+        mGridView.setOnScrollListener(this);
+        mGridView.setOnItemClickListener(this);
+
         if (mAdapter == null) {
             mAdapter = new VenueAdapter(getActivity(), R.id.image);
         }
+
+        mGridView.setAdapter(mAdapter);
 
         if (mData.size() == 0) {
             venueProvider.loadVenues(this, offset);
 
             mHasRequestedMore = true;
+        } else {
+            mAdapter.notifyDataSetChanged();
         }
-
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnScrollListener(this);
-        mGridView.setOnItemClickListener(this);
     }
 
     @Override
