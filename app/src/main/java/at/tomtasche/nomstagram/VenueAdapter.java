@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.etsy.android.grid.util.DynamicHeightImageView;
@@ -25,6 +26,7 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
     static class ViewHolder {
         DynamicHeightImageView image;
         TextView textName;
+        ImageView imageSource;
     }
 
     private final LayoutInflater mLayoutInflater;
@@ -47,6 +49,7 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
             vh = new ViewHolder();
             vh.image = (DynamicHeightImageView) convertView.findViewById(R.id.image);
             vh.textName = (TextView) convertView.findViewById(R.id.text_name);
+            vh.imageSource = (ImageView) convertView.findViewById(R.id.image_source);
 
             convertView.setTag(vh);
         } else {
@@ -56,6 +59,10 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
         final Venue venue = getItem(position);
 
         vh.textName.setText(venue.getName());
+
+        if (venue.getSource().equals("foursquare")) {
+            vh.imageSource.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_foursquare));
+        }
 
         double positionHeight = getPositionRatio(position);
         vh.image.setHeightRatio(positionHeight);

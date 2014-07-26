@@ -190,7 +190,7 @@ public class VenueActivity extends FragmentActivity implements VenueProvider, Lo
                 continue;
             }
 
-            Venue venue = new Venue(venueId);
+            Venue venue = new Venue(venueId, "foursquare");
             venue.setName(venueName);
             venue.addPhotoUrls(venuePhotos);
 

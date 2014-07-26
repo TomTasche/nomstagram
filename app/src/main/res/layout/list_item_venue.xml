@@ -12,8 +12,20 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/text_name"
+    <LinearLayout
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image_source"
+            android:layout_width="14sp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"/>
+
+        <TextView
+            android:id="@+id/text_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

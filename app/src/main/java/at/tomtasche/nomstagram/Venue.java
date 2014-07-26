@@ -9,12 +9,14 @@ import java.util.List;
 public class Venue {
 
     private final String id;
+    private final String source;
 
     private String name;
     private final List<String> photoUrls;
 
-    public Venue(String id) {
+    public Venue(String id, String source) {
         this.id = id;
+        this.source = source;
 
         photoUrls = new ArrayList<String>();
     }
@@ -38,6 +40,10 @@ public class Venue {
 
     public String getId() {
         return id;
+    }
+
+    public String getSource() {
+        return source;
     }
 
     public void setName(String name) {
