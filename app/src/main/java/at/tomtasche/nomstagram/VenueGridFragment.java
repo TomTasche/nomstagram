@@ -2,7 +2,6 @@ package at.tomtasche.nomstagram;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import com.etsy.android.grid.StaggeredGridView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +46,7 @@ public class VenueGridFragment extends Fragment implements
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_venue, container, false);
+        return inflater.inflate(R.layout.fragment_venues, container, false);
     }
 
     @Override
@@ -117,8 +117,14 @@ public class VenueGridFragment extends Fragment implements
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Venue venue = mAdapter.getItem(position);
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(VenueActivity.FOURSQUARE_URL_BASE + VenueActivity.FOURSQUARE_PATH_VENUE + venue.getId()));
+        Bundle bundle = new Bundle();
+        bundle.putString(VenueActivity.EXTRA_VENUE_ID, venue.getId());
+        bundle.putString(VenueActivity.EXTRA_VENUE_NAME, venue.getName());
+        bundle.putStringArrayList(VenueActivity.EXTRA_VENUE_PHOTO_URLS, new ArrayList<String>(venue.getPhotoUrls()));
+
+        Intent intent = new Intent(getActivity(), VenueActivity.class);
+        intent.putExtras(bundle);
+
         getActivity().startActivity(intent);
     }
 
