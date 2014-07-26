@@ -2,8 +2,5 @@
 <resources>
 
     <string name="app_name">nomstagram</string>
-    <string name="hello">Hello nomstagram!</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
 
 </resources>

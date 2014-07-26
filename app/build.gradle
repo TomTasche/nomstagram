@@ -1,12 +1,16 @@
 apply plugin: 'android'
 
+repositories {
+    mavenCentral()
+}
+
 android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
 
     defaultConfig {
         applicationId "at.tomtasche.nomstagram"
-        minSdkVersion 8
+        minSdkVersion 11
         targetSdkVersion 19
     }
 
@@ -16,4 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+}
+
+dependencies {
+    compile 'com.etsy.android.grid:library:1.0.5'
+    compile 'com.squareup.picasso:picasso:2.3.3'
 }
