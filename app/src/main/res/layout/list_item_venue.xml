@@ -14,11 +14,4 @@
         android:gravity="center"
         android:scaleType="centerCrop" />
 
-    <Button
-        android:id="@+id/btn_go"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:text="Go there!" />
-
 </FrameLayout>

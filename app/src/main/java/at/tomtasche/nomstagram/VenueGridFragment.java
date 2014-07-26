@@ -1,6 +1,8 @@
 package at.tomtasche.nomstagram;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -65,16 +67,14 @@ public class VenueGridFragment extends Fragment implements
         if (savedInstanceState == null) {
             final LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
-            View header = layoutInflater.inflate(R.layout.list_item_header_footer, null);
             View footer = layoutInflater.inflate(R.layout.list_item_header_footer, null);
-            TextView txtHeaderTitle = (TextView) header.findViewById(R.id.txt_title);
             TextView txtFooterTitle = (TextView) footer.findViewById(R.id.txt_title);
 
-            txtHeaderTitle.setText("food near you");
             txtFooterTitle.setText("still hungry? loading more...");
 
-            mGridView.addHeaderView(header);
             mGridView.addFooterView(footer);
+
+            mGridView.setEmptyView(getView().findViewById(android.R.id.empty));
         }
 
         if (mAdapter == null) {
@@ -110,7 +110,11 @@ public class VenueGridFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
+        Venue venue = mAdapter.getItem(position);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(VenueActivity.FOURSQUARE_URL_BASE + VenueActivity.FOURSQUARE_PATH_VENUE + venue.id));
+        getActivity().startActivity(intent);
     }
 
     @Override

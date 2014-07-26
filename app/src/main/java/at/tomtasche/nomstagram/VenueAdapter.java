@@ -26,7 +26,6 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
 
     static class ViewHolder {
         DynamicHeightImageView image;
-        Button btnGo;
     }
 
     private final LayoutInflater mLayoutInflater;
@@ -48,7 +47,6 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
             convertView = mLayoutInflater.inflate(R.layout.list_item_venue, parent, false);
             vh = new ViewHolder();
             vh.image = (DynamicHeightImageView) convertView.findViewById(R.id.image);
-            vh.btnGo = (Button) convertView.findViewById(R.id.btn_go);
 
             convertView.setTag(vh);
         } else {
@@ -67,15 +65,6 @@ public class VenueAdapter extends ArrayAdapter<Venue> {
 
             Picasso.with(getContext()).load(R.drawable.ic_launcher).into(vh.image);
         }
-
-        vh.btnGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(VenueActivity.FOURSQUARE_URL_BASE + VenueActivity.FOURSQUARE_PATH_VENUE + venue.id));
-                getContext().startActivity(intent);
-            }
-        });
 
         return convertView;
     }
