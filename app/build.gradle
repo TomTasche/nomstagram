@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
@@ -10,19 +10,23 @@ android {
 
     defaultConfig {
         applicationId "at.tomtasche.nomstagram"
-        minSdkVersion 11
+        minSdkVersion 15
         targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
     }
-
     buildTypes {
         release {
             runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(path: ':engine', configuration: 'android-endpoints')
+
     compile 'com.etsy.android.grid:library:1.0.5'
 
     compile 'com.squareup.picasso:picasso:2.3.3'
