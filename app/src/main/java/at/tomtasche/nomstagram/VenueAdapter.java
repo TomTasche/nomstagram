@@ -17,6 +17,8 @@ import com.squareup.picasso.Picasso;
 import java.util.Collection;
 import java.util.Random;
 
+import at.tomtasche.nomstagram.engine.foursquareApi.model.Venue;
+
 /**
  * ADAPTER
  */

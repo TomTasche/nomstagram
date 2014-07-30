@@ -8,6 +8,7 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
     dependencies {
         classpath 'com.google.appengine:gradle-appengine-plugin:1.9.6'
     }
@@ -26,16 +27,22 @@ targetCompatibility = 1.7
 
 dependencies {
   appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.6'
+
   compile 'com.google.appengine:appengine-endpoints:1.9.6'
   compile 'com.google.appengine:appengine-endpoints-deps:1.9.6'
+
   compile 'javax.servlet:servlet-api:2.5'
+
+  compile 'org.json:json:20140107'
 }
 
 appengine {
   downloadSdk = true
+
   appcfg {
     oauth2 = true
   }
+
   endpoints {
     getClientLibsOnBuild = true
     getDiscoveryDocsOnBuild = true

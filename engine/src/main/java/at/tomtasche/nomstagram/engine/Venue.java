@@ -1,4 +1,4 @@
-package at.tomtasche.nomstagram;
+package at.tomtasche.nomstagram.engine;
 
 import java.util.ArrayList;
 import java.util.List;

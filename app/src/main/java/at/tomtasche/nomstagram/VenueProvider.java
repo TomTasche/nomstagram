@@ -2,6 +2,8 @@ package at.tomtasche.nomstagram;
 
 import java.util.List;
 
+import at.tomtasche.nomstagram.engine.foursquareApi.model.Venue;
+
 /**
  * Created by tom on 26.07.14.
  */

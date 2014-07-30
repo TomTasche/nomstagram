@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import at.tomtasche.nomstagram.engine.foursquareApi.model.Venue;
+
+
 /**
  * Created by tom on 26.07.14.
  */

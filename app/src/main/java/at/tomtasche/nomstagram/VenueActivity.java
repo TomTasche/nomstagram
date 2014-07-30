@@ -18,9 +18,13 @@ import java.util.List;
  */
 public class VenueActivity extends Activity {
 
+    public static final String FOURSQUARE_URL_BASE = "https://foursquare.com/";
+    public static final String FOURSQUARE_PATH_VENUE = "v/";
+
     public static final String EXTRA_VENUE_ID = "venue_id";
     public static final String EXTRA_VENUE_NAME = "venue_name";
     public static final String EXTRA_VENUE_PHOTO_URLS = "venue_photo_urls";
+
     private String venueId;
 
     @Override
@@ -64,7 +68,7 @@ public class VenueActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_go:
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(VenuesActivity.FOURSQUARE_URL_BASE + VenuesActivity.FOURSQUARE_PATH_VENUE + venueId));
+                intent.setData(Uri.parse(FOURSQUARE_URL_BASE + FOURSQUARE_PATH_VENUE + venueId));
                 startActivity(intent);
 
                 break;
