@@ -3,6 +3,8 @@ package at.tomtasche.nomstagram.engine;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.appengine.api.memcache.AsyncMemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,14 @@ public class FoursquareEndpoint {
     private static final String API_PARAM_VERSION = "?v=20140712";
     private static final String API_PARAM_CLIENT_ID = "&client_id=H4ZMXXNEL2HFTJE0FK5MOTICRVE3LFYS450LHFG2RDNBC3EF";
     private static final String API_PARAM_CLIENT_SECRET = "&client_secret=WN4OSPJESZ0KVSQE3Q0KCAVSW1ZC2VZA1IDA515T4LOIY5EM";
+
+    private final FoodTaster foodTaster;
+
+    public FoursquareEndpoint() {
+        foodTaster = new FoodTaster();
+
+        foodTaster.initialize();
+    }
 
     @ApiMethod(name = "venues")
     public List<Venue> getVenues(@Named("lat") double lat, @Named("lon") double lon, @Named("radius") int radius) {
@@ -75,6 +85,11 @@ public class FoursquareEndpoint {
                 // it doesn't make sense right now to include restaurants without photos in this app
 
                 continue;
+            }
+
+            String foodUrl = foodTaster.findTasty(venuePhotos);
+            if (foodUrl != null) {
+                venuePhotos.add(0, foodUrl);
             }
 
             Venue venue = new Venue(venueId, "foursquare");

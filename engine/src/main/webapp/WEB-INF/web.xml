@@ -6,7 +6,7 @@
 
         <init-param>
             <param-name>services</param-name>
-            <param-value>at.tomtasche.nomstagram.engine.FoursquareEndpoint</param-value>
+            <param-value>at.tomtasche.nomstagram.engine.FoursquareEndpoint,at.tomtasche.nomstagram.engine.FoodEndpoint</param-value>
         </init-param>
     </servlet>
 
@@ -14,8 +14,4 @@
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
-
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
 </web-app>
