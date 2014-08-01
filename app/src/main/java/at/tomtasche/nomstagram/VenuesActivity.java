@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,7 +67,7 @@ public class VenuesActivity extends FragmentActivity implements VenueProvider, L
         mainHandler = new Handler();
 
         FoursquareApi.Builder builder = new FoursquareApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                // options for running against local devappserver
+                /*// options for running against local devappserver
                 // - 10.0.2.2 is localhost's IP address in Android emulator
                 .setRootUrl("http://192.168.0.116:8080/_ah/api/")
                 .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
@@ -78,9 +76,7 @@ public class VenuesActivity extends FragmentActivity implements VenueProvider, L
                         // - turn off compression when running against local devappserver
                         abstractGoogleClientRequest.setDisableGZipContent(true);
                     }
-                });
-
-        // TODO: AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                })*/;
 
         foursquare = builder.build();
     }

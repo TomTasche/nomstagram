@@ -3,8 +3,6 @@ package at.tomtasche.nomstagram.engine;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.appengine.api.memcache.AsyncMemcacheService;
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +23,10 @@ import java.util.logging.Logger;
 
 import javax.inject.Named;
 
-/** An endpoint class we are exposing */
-@Api(name = "foursquareApi", version = "v1", namespace = @ApiNamespace(ownerDomain = "engine.nomstagram.tomtasche.at", ownerName = "engine.nomstagram.tomtasche.at", packagePath=""))
+/**
+ * An endpoint class we are exposing
+ */
+@Api(name = "foursquareApi", version = "v1", namespace = @ApiNamespace(ownerDomain = "engine.nomstagram.tomtasche.at", ownerName = "engine.nomstagram.tomtasche.at", packagePath = ""))
 public class FoursquareEndpoint {
 
     private static final String API_URL_ENDPOINT = "https://api.foursquare.com/v2/";
@@ -87,6 +87,7 @@ public class FoursquareEndpoint {
                 continue;
             }
 
+            // TODO: make this async
             String foodUrl = foodTaster.findTasty(venuePhotos);
             if (foodUrl != null) {
                 venuePhotos.add(0, foodUrl);

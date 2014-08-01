@@ -4,7 +4,6 @@ import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.memcache.AsyncMemcacheService;
-import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -21,14 +20,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by tom on 30.07.14.
@@ -39,12 +34,16 @@ public class FoodTaster {
 
     private final AsyncMemcacheService memcacheService;
 
+    private final Logger logger;
+
     private final List<String> foodKeywords;
 
     public FoodTaster() {
         urlFetchService = URLFetchServiceFactory.getURLFetchService();
 
         memcacheService = MemcacheServiceFactory.getAsyncMemcacheService();
+
+        logger = Logger.getLogger("FoodTaster");
 
         foodKeywords = new LinkedList<String>();
     }
@@ -63,11 +62,13 @@ public class FoodTaster {
             HTTPRequest camfindRequestRequest = createCamfindRequestRequest(photoUrl);
             HTTPResponse camfindRequestResponse = urlFetchService.fetch(camfindRequestRequest);
 
+            logger.log(Level.FINE, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")));
             String token = getStringFromJsonResult(camfindRequestResponse, "token");
 
             HTTPRequest camfindResponseRequest = createCamfindResponseRequest(token);
             HTTPResponse camfindResponseResponse = urlFetchService.fetch(camfindResponseRequest);
 
+            logger.log(Level.FINE, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")));
             String food = getStringFromJsonResult(camfindResponseResponse, "name");
 
             memcacheService.put(photoUrl, food);
