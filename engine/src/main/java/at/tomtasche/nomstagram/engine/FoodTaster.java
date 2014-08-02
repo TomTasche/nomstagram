@@ -12,6 +12,7 @@ import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -62,14 +63,26 @@ public class FoodTaster {
             HTTPRequest camfindRequestRequest = createCamfindRequestRequest(photoUrl);
             HTTPResponse camfindRequestResponse = urlFetchService.fetch(camfindRequestRequest);
 
-            logger.log(Level.FINE, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")));
-            String token = getStringFromJsonResult(camfindRequestResponse, "token");
+            String token;
+            try {
+                token = getStringFromJsonResult(camfindRequestResponse, "token");
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl);
+
+                continue;
+            }
 
             HTTPRequest camfindResponseRequest = createCamfindResponseRequest(token);
             HTTPResponse camfindResponseResponse = urlFetchService.fetch(camfindResponseRequest);
 
-            logger.log(Level.FINE, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")));
-            String food = getStringFromJsonResult(camfindResponseResponse, "name");
+            String food;
+            try {
+                food = getStringFromJsonResult(camfindResponseResponse, "name");
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl);
+
+                continue;
+            }
 
             memcacheService.put(photoUrl, food);
 
