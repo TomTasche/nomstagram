@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,24 +61,52 @@ public class FoodTaster {
         for (String photoUrl : photoUrls) {
             HTTPRequest camfindRequestRequest = createCamfindRequestRequest(photoUrl);
             HTTPResponse camfindRequestResponse = urlFetchService.fetch(camfindRequestRequest);
+            if (camfindOverload(camfindRequestResponse.getContent())) {
+                return null;
+            }
 
             String token;
             try {
                 token = getStringFromJsonResult(camfindRequestResponse, "token");
             } catch (JSONException e) {
-                logger.log(Level.WARNING, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl);
+                logger.log(Level.WARNING, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
 
                 continue;
             }
 
             HTTPRequest camfindResponseRequest = createCamfindResponseRequest(token);
             HTTPResponse camfindResponseResponse = urlFetchService.fetch(camfindResponseRequest);
+            if (camfindOverload(camfindRequestResponse.getContent())) {
+                return null;
+            }
 
             String food;
             try {
+                do {
+                    String status;
+                    try {
+                        status = getStringFromJsonResult(camfindResponseResponse, "status");
+                    } catch (JSONException e) {
+                        logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
+
+                        continue;
+                    }
+
+                    logger.log(Level.FINEST, "status for photo " + photoUrl + " is " + status);
+                    if (!"not completed".equals(status)) {
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } while (true);
+
                 food = getStringFromJsonResult(camfindResponseResponse, "name");
             } catch (JSONException e) {
-                logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl);
+                logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
 
                 continue;
             }
@@ -95,12 +122,17 @@ public class FoodTaster {
         return null;
     }
 
+    private boolean camfindOverload(byte[] result) {
+        String resultString = new String(result, Charset.forName("UTF-8"));
+        return resultString.equals("Too Many Requests");
+    }
+
     private HTTPRequest createCamfindRequestRequest(String photoUrl) throws MalformedURLException, UnsupportedEncodingException {
         HTTPRequest httpRequest = new HTTPRequest(new URL("https://camfind.p.mashape.com/image_requests"), HTTPMethod.POST);
         httpRequest.addHeader(new HTTPHeader("X-Mashape-Key", "uRNghWbADRmshyiXU2Yq1Ly4388lp1OpJ8djsn37Dj1pUWITVd"));
 
-        String body = "image_request[locale]=en_US&" + "image_request[remote_image_url]=" + photoUrl;
-        body = URLEncoder.encode(body, "UTF-8");
+        String body = "image_request[remote_image_url]=" + photoUrl + "&amp;image_request[locale]=en_US";
+        //body = URLEncoder.encode(body, "UTF-8");
 
         httpRequest.setPayload(body.getBytes("UTF-8"));
 
