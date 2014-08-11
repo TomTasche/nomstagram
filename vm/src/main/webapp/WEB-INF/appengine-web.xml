@@ -7,7 +7,9 @@
     <vm>true</vm>
     <vm-settings>
         <setting name="machine_type" value="n1-standard-1" />
+        <setting name="apt_get_install" value="build-essential wget unzip"/>
     </vm-settings>
+
     <manual-scaling>
         <instances>1</instances>
     </manual-scaling>

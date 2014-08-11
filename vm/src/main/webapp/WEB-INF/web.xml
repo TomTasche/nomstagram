@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <servlet>
-        <servlet-name>StartupServlet</servlet-name>
-        <servlet-class>at.tomtasche.nomstagram.vm.StartupServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>StartupServlet</servlet-name>
-        <url-pattern>/_ah/start</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>BeliefServlet</servlet-name>
         <servlet-class>at.tomtasche.nomstagram.vm.BeliefServlet</servlet-class>
     </servlet>
