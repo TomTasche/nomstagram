@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,31 +23,53 @@ public class BeliefServlet extends HttpServlet {
 
     private final Logger logger;
 
+    private final File beliefDirectory;
+    private final File cacheDirectory;
+
     public BeliefServlet() {
         logger = Logger.getLogger("Beliefer");
+
+        beliefDirectory = new File("deepbelief");
+        cacheDirectory = new File("cache");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/plain");
-        resp.getWriter().println("belief me!");
+        initializeBeliefer();
 
-        File beliefDirectory = new File("deepbelief");
-
-        if (beliefDirectory.exists()) {
-            // String output = executeCommand("ls", exampleDirectory);
-            String output = executeCommand("./deepbelief burger.png", beliefDirectory);
-        } else {
-            beliefDirectory.mkdir();
-
-            String output = executeCommand(
-                    "wget -nv -O belief.zip http://ge.tt/api/1/files/9H5Ygvq1/0/blob?download",
-                    beliefDirectory);
-
-            output = executeCommand("unzip belief.zip", beliefDirectory);
-
-            output = executeCommand("./deepbelief", beliefDirectory);
+        if (!cacheDirectory.exists()) {
+            cacheDirectory.mkdir();
         }
+
+        String photoUrl = req.getParameter("photoUrl");
+
+        File tempFile = File.createTempFile("photo-", ".png", cacheDirectory);
+
+        URL website = new URL(photoUrl);
+        Files.copy(website.openStream(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        String output = executeCommand("./deepbelief burger.png", beliefDirectory);
+
+        output = executeCommand("./deepbelief " + tempFile.getAbsolutePath(), beliefDirectory);
+
+        resp.setContentType("text/plain");
+        resp.getWriter().println(output);
+    }
+
+    private void initializeBeliefer() {
+        if (beliefDirectory.exists()) {
+            return;
+        }
+
+        beliefDirectory.mkdir();
+
+        String output = executeCommand(
+                "wget -nv -O belief.zip http://ge.tt/api/1/files/9H5Ygvq1/0/blob?download",
+                beliefDirectory);
+
+        output = executeCommand("unzip belief.zip", beliefDirectory);
+
+        output = executeCommand("./deepbelief", beliefDirectory);
     }
 
     private String executeCommand(String command, File directory) {
