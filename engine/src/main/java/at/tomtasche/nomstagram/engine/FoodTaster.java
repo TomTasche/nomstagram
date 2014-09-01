@@ -5,20 +5,17 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.memcache.AsyncMemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,59 +56,14 @@ public class FoodTaster {
 
     public String findTasty(List<String> photoUrls) throws IOException {
         for (String photoUrl : photoUrls) {
-            HTTPRequest camfindRequestRequest = createCamfindRequestRequest(photoUrl);
-            HTTPResponse camfindRequestResponse = urlFetchService.fetch(camfindRequestRequest);
-            if (camfindOverload(camfindRequestResponse.getContent())) {
-                return null;
-            }
+            HTTPRequest tastyRequest = createTastyRequest(photoUrl);
+            HTTPResponse tastyResponse = urlFetchService.fetch(tastyRequest);
 
-            String token;
-            try {
-                token = getStringFromJsonResult(camfindRequestResponse, "token");
-            } catch (JSONException e) {
-                logger.log(Level.WARNING, new String(camfindRequestResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
-
-                continue;
-            }
-
-            HTTPRequest camfindResponseRequest = createCamfindResponseRequest(token);
-            HTTPResponse camfindResponseResponse = urlFetchService.fetch(camfindResponseRequest);
-            if (camfindOverload(camfindRequestResponse.getContent())) {
-                return null;
-            }
-
-            String food;
-            try {
-                do {
-                    String status;
-                    try {
-                        status = getStringFromJsonResult(camfindResponseResponse, "status");
-                    } catch (JSONException e) {
-                        logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
-
-                        continue;
-                    }
-
-                    logger.log(Level.FINEST, "status for photo " + photoUrl + " is " + status);
-                    if (!"not completed".equals(status)) {
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } while (true);
-
-                food = getStringFromJsonResult(camfindResponseResponse, "name");
-            } catch (JSONException e) {
-                logger.log(Level.WARNING, new String(camfindResponseResponse.getContent(), Charset.forName("UTF-8")) + " for photo " + photoUrl, e);
-
-                continue;
-            }
+            String food = getStringFromResponse(tastyResponse);
 
             memcacheService.put(photoUrl, food);
+
+            logger.log(Level.FINE, "found " + food + " for photo " + photoUrl);
 
             if (isTasty(food)) {
                 // return the first photoUrl that looks like food
@@ -122,35 +74,17 @@ public class FoodTaster {
         return null;
     }
 
-    private boolean camfindOverload(byte[] result) {
-        String resultString = new String(result, Charset.forName("UTF-8"));
-        return resultString.equals("Too Many Requests");
-    }
+    private HTTPRequest createTastyRequest(String photoUrl) throws MalformedURLException, UnsupportedEncodingException {
+        photoUrl = URLEncoder.encode(photoUrl, "UTF-8");
 
-    private HTTPRequest createCamfindRequestRequest(String photoUrl) throws MalformedURLException, UnsupportedEncodingException {
-        HTTPRequest httpRequest = new HTTPRequest(new URL("https://camfind.p.mashape.com/image_requests"), HTTPMethod.POST);
-        httpRequest.addHeader(new HTTPHeader("X-Mashape-Key", "uRNghWbADRmshyiXU2Yq1Ly4388lp1OpJ8djsn37Dj1pUWITVd"));
-
-        String body = "image_request[remote_image_url]=" + photoUrl + "&amp;image_request[locale]=en_US";
-        //body = URLEncoder.encode(body, "UTF-8");
-
-        httpRequest.setPayload(body.getBytes("UTF-8"));
-
+        HTTPRequest httpRequest = new HTTPRequest(new URL("http://tastyornot.tomtasche.at:8080/?photoUrl=" + photoUrl), HTTPMethod.GET);
         return httpRequest;
     }
 
-    private HTTPRequest createCamfindResponseRequest(String token) throws MalformedURLException, UnsupportedEncodingException {
-        HTTPRequest httpRequest = new HTTPRequest(new URL("https://camfind.p.mashape.com/image_responses/" + token), HTTPMethod.GET);
-        httpRequest.addHeader(new HTTPHeader("X-Mashape-Key", "uRNghWbADRmshyiXU2Yq1Ly4388lp1OpJ8djsn37Dj1pUWITVd"));
-
-        return httpRequest;
-    }
-
-    private String getStringFromJsonResult(HTTPResponse response, String key) {
+    private String getStringFromResponse(HTTPResponse response) {
         String result = new String(response.getContent(), Charset.forName("UTF-8"));
 
-        JSONObject jsonObject = new JSONObject(result);
-        return jsonObject.getString(key);
+        return result;
     }
 
     private boolean isTasty(String food) {
