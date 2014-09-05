@@ -35,11 +35,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="jetty-server-9.2.2.v20140723" level="project" />
+    <orderEntry type="library" exported="" name="jetty-servlet-9.2.2.v20140723" level="project" />
     <orderEntry type="library" exported="" name="javax.servlet-api-3.1.0" level="project" />
     <orderEntry type="library" exported="" name="jetty-util-9.2.2.v20140723" level="project" />
     <orderEntry type="library" exported="" name="jetty-http-9.2.2.v20140723" level="project" />
     <orderEntry type="library" exported="" name="jetty-io-9.2.2.v20140723" level="project" />
+    <orderEntry type="library" exported="" name="jetty-server-9.2.2.v20140723" level="project" />
+    <orderEntry type="library" exported="" name="jetty-security-9.2.2.v20140723" level="project" />
+    <orderEntry type="library" exported="" name="deepbelief" level="project" />
+    <orderEntry type="library" exported="" name="jna-4.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libjpcnn" level="project" />
   </component>
 </module>
 
